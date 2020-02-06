@@ -5,6 +5,16 @@
 
 using namespace Rcpp;
 
+// init
+void init(std::string path);
+RcppExport SEXP _lantern_init(SEXP pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    init(path);
+    return R_NilValue;
+END_RCPP
+}
 // rcpp_hello_world
 List rcpp_hello_world();
 RcppExport SEXP _lantern_rcpp_hello_world() {
@@ -17,6 +27,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_lantern_init", (DL_FUNC) &_lantern_init, 1},
     {"_lantern_rcpp_hello_world", (DL_FUNC) &_lantern_rcpp_hello_world, 0},
     {NULL, NULL, 0}
 };
