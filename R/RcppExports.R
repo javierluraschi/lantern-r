@@ -5,7 +5,7 @@ init <- function(path) {
     invisible(.Call(`_lantern_init`, path))
 }
 
-rcpp_hello_world <- function() {
-    .Call(`_lantern_rcpp_hello_world`)
+rcpp_lantern_test <- function() {
+    invisible(.Call(`_lantern_rcpp_lantern_test`))
 }
 

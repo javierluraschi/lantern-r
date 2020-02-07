@@ -15,20 +15,19 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// rcpp_hello_world
-List rcpp_hello_world();
-RcppExport SEXP _lantern_rcpp_hello_world() {
+// rcpp_lantern_test
+void rcpp_lantern_test();
+RcppExport SEXP _lantern_rcpp_lantern_test() {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpp_hello_world());
-    return rcpp_result_gen;
+    rcpp_lantern_test();
+    return R_NilValue;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lantern_init", (DL_FUNC) &_lantern_init, 1},
-    {"_lantern_rcpp_hello_world", (DL_FUNC) &_lantern_rcpp_hello_world, 0},
+    {"_lantern_rcpp_lantern_test", (DL_FUNC) &_lantern_rcpp_lantern_test, 0},
     {NULL, NULL, 0}
 };
 

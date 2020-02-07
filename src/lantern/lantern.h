@@ -10,15 +10,22 @@
 
 #ifdef LANTERN_BUILD
 #define LANTERN_PTR
+#ifdef _WIN32
+#define LANTERN_API extern "C" __declspec(dllexport)
+#endif
 #else
 #define LANTERN_PTR *
+#endif
+
+#ifndef LANTERN_API
+#define LANTERN_API
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   
-  void (LANTERN_PTR lanternPrint)();
+LANTERN_API void (LANTERN_PTR lanternTest)();
   
 #ifdef __cplusplus
 }
@@ -129,7 +136,7 @@ bool lanternInit(const std::string& libPath, std::string* pError)
   if (!lanternLoadLibrary(libPath, pError))
     return false;
   
-  LOAD_SYMBOL(lanternPrint);
+  LOAD_SYMBOL(lanternTest);
   
   return true;
 }
