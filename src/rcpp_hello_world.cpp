@@ -5,7 +5,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-void init(std::string path) {
+void rcpp_lantern_init(std::string path) {
   std::string error;
   if (!lanternInit(path, &error))
     Rcpp::stop(error);

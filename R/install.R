@@ -30,15 +30,19 @@ torch_install_library <- function(library_name, library_url, install_path, filte
   file.copy(source_files, install_path, recursive = TRUE)
 }
 
+torch_installed <- function(version = "1.3.0") {
+  install_path <- torch_home(version = version)
+  dir.exists(install_path)
+}
+
 #' @export
 torch_install <- function(version = "1.3.0", type = "cpu") {
-  install_path <- torch_home(version = version)
-  
-  if (dir.exists(install_path)) {
+  if (torch_installed(version = version)) {
     message("Torch ", version, " is already installed.")
     return(install_path)
   }
   
+  install_path <- torch_home(version = version)
   dir.create(install_path)
   
   current_os <- tolower(Sys.info()[["sysname"]])
