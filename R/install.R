@@ -22,7 +22,7 @@ install_config <- list(
 )
 
 lantern_install_path <- function() {
-  paste0(system.file("", package = "lantern"), "deps")
+  normalizePath(file.path(system.file("", package = "lantern"), "deps"))
 }
 
 lantern_installed <- function() {
