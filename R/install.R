@@ -2,19 +2,27 @@ install_config <- list(
   "1.3.0" = list(
     "cpu" = list(
       "darwin" = list(
-        "libtorch" = "https://download.pytorch.org/libtorch/cpu/libtorch-macos-1.3.0.zip"
+        "libtorch" = list(
+          url = "https://download.pytorch.org/libtorch/cpu/libtorch-macos-1.3.0.zip",
+          path = "libtorch/lib",
+          filter = ".dylib"
+        ),
+        "liblantern" = "https://github.com/mlverse/lantern/releases/download/v0.0.2/macOS.zip"
       )
     )
   )
 )
 
-#' @export
-torch_home <- function(version = "1.3.0") {
-  normalizePath(file.path("~/libtorch", version), mustWork = FALSE)
+lantern_install_path <- function() {
+  paste0(system.file("", package = "lantern"), "deps")
 }
 
-torch_install_library <- function(library_name, library_url, install_path, filter) {
-  library_extension <- tools::file_ext(library_url)
+lantern_installed <- function() {
+  dir.exists(lantern_install_path())
+}
+
+lantern_install_lib <- function(library_name, library_url, install_path, source_path, filter) {
+  library_extension <- paste0(".", tools::file_ext(library_url))
   temp_file <- tempfile(fileext = library_extension)
   temp_path <- tempfile()
   
@@ -23,28 +31,14 @@ torch_install_library <- function(library_name, library_url, install_path, filte
   uncompress <- if (identical(library_extension, "tgz")) untar else unzip
   
   uncompress(temp_file, exdir = temp_path)
-  source_files <- dir(dir(temp_path, full.names = T), full.names = T)
+  source_files <- dir(file.path(temp_path, source_path), full.names = T)
   
   if (!is.null(filter)) source_files <- Filter(filter, source_files)
   
   file.copy(source_files, install_path, recursive = TRUE)
 }
 
-torch_installed <- function(version = "1.3.0") {
-  install_path <- torch_home(version = version)
-  dir.exists(install_path)
-}
-
-#' @export
-torch_install <- function(version = "1.3.0", type = "cpu") {
-  if (torch_installed(version = version)) {
-    message("Torch ", version, " is already installed.")
-    return(install_path)
-  }
-  
-  install_path <- torch_home(version = version)
-  dir.create(install_path)
-  
+lantern_install_libs <- function(version, type, install_path) {
   current_os <- tolower(Sys.info()[["sysname"]])
   
   if (!version %in% names(install_config))
@@ -62,25 +56,30 @@ torch_install <- function(version = "1.3.0", type = "cpu") {
   for (library_name in names(install_info)) {
     library_info <- install_info[[library_name]]
     
-    if (!is.list(library_info)) library_info <- list(url = library_info, filter = "")
+    if (!is.list(library_info)) library_info <- list(url = library_info, filter = "", path = "")
     
-    torch_install_library(library_name = library_name,
-                          library_url = library_info$url,
-                          install_path = install_path,
-                          filter = function(e) grepl(library_info$filter, e))
+    lantern_install_lib(library_name = library_name,
+                        library_url = library_info$url,
+                        install_path = install_path,
+                        source_path = library_info$path,
+                        filter = function(e) grepl(library_info$filter, e))
   }
   
   invisible(install_path)
 }
 
 #' @export
-torch_uninstall <- function(version = "1.3.0") {
-  torch_home <- torch_home(version = version)
-  
-  if (!dir.exists(torch_home)) {
-    message("Torch ", version, " is not installed.")
-    return()
+lantern_install <- function(version = "1.3.0", type = "cpu", reinstall = FALSE) {
+  if (reinstall) {
+    unlink(lantern_install_path(), recursive = TRUE)
   }
   
-  unlink(torch_home, recursive = TRUE)
+  if (lantern_installed()) {
+    stop("Lantern is already installed.")
+  }
+  
+  install_path <- lantern_install_path()
+  dir.create(install_path)
+  
+  lantern_install_libs(version, type, install_path)
 }

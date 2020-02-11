@@ -136,6 +136,9 @@ bool lanternInit(const std::string& libPath, std::string* pError)
   if (!lanternLoadLibrary(libPath, pError))
     return false;
   
+  if (!lanternLoadLibrary(libPath, pError))
+    return false;
+  
   LOAD_SYMBOL(lanternTest);
   
   return true;
