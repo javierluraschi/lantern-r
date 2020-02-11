@@ -8,6 +8,14 @@ install_config <- list(
           filter = ".dylib"
         ),
         "liblantern" = "https://github.com/mlverse/lantern/releases/download/v0.0.2/macOS.zip"
+      ),
+      "windows" = list(
+        "libtorch" = list(
+          url = "https://download.pytorch.org/libtorch/cpu/libtorch-win-shared-with-deps-1.3.0.zip",
+          path = "libtorch/lib",
+          filter = ".dll"
+        ),
+        "liblantern" = "https://github.com/mlverse/lantern/releases/download/v0.0.2/windows.zip"
       )
     )
   )
