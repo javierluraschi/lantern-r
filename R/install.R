@@ -72,6 +72,7 @@ lantern_install_libs <- function(version, type, install_path) {
     library_info <- install_info[[library_name]]
     
     if (!is.list(library_info)) library_info <- list(url = library_info, filter = "", path = "")
+    if (is.null(library_info$filter)) library_info$filter <- ""
     
     lantern_install_lib(library_name = library_name,
                         library_url = library_info$url,
