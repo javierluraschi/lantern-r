@@ -20,8 +20,7 @@ install_config <- list(
       "linux" = list(
         "libtorch" = list(
           url = "https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.3.0%2Bcpu.zip",
-          path = "libtorch/lib",
-          filter = ".so"
+          path = "libtorch/lib"
         ),
         "liblantern" = "https://github.com/mlverse/lantern/releases/download/v0.0.4/linux.zip"
       )
