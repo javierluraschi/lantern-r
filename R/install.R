@@ -7,7 +7,7 @@ install_config <- list(
           path = "libtorch/lib",
           filter = ".dylib"
         ),
-        "liblantern" = "https://github.com/mlverse/lantern/releases/download/v0.0.2/macOS.zip"
+        "liblantern" = "https://github.com/mlverse/lantern/releases/download/v0.0.4/macOS.zip"
       ),
       "windows" = list(
         "libtorch" = list(
@@ -15,7 +15,15 @@ install_config <- list(
           path = "libtorch/lib",
           filter = ".dll"
         ),
-        "liblantern" = "https://github.com/mlverse/lantern/releases/download/v0.0.2/windows.zip"
+        "liblantern" = "https://github.com/mlverse/lantern/releases/download/v0.0.4/windows.zip"
+      ),
+      "linux" = list(
+        "libtorch" = list(
+          url = "https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.3.0%2Bcpu.zip",
+          path = "libtorch/lib",
+          filter = ".so"
+        ),
+        "liblantern" = "https://github.com/mlverse/lantern/releases/download/v0.0.4/linux.zip"
       )
     )
   )
