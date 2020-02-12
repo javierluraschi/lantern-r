@@ -25,6 +25,28 @@
 extern "C" {
 #endif
   
+inline const char* pathSeparator()
+{
+#ifdef _WIN32
+    return "\\";
+#else
+    return "/";
+#endif
+}
+  
+inline const char* libraryName()
+{
+#ifdef __APPLE__
+  return "liblantern.dylib";
+#else
+#ifdef _WIN32
+  return "lantern.dll";
+#else
+  return "liblantern.so";
+#endif
+#endif
+}
+  
 LANTERN_API void (LANTERN_PTR lanternTest)();
   
 #ifdef __cplusplus
@@ -77,15 +99,42 @@ void lanternLoadError(std::string* pError)
 bool lanternLoadLibrary(const std::string& libPath, std::string* pError)
 {
   pLibrary = NULL;
+
+  std::string separator = (libPath.back() == '/' || libPath.back() == '\\') ? "" : pathSeparator();
+  std::string libFile = libPath + separator + libraryName();
+
 #ifdef _WIN32
-  pLibrary = (void*)::LoadLibraryEx(libPath.c_str(), NULL, LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
+  
+  typedef DLL_DIRECTORY_COOKIE(WINAPI * PAddDllDirectory)(PCWSTR);
+  HMODULE hKernel = ::GetModuleHandle("kernel32.dll");
+
+  if (hKernel == NULL) {
+    lanternLoadError(pError);
+    *pError = "Get Kernel - " + *pError;
+    return false;
+  }
+  
+  PAddDllDirectory add_dll_directory = (PAddDllDirectory)::GetProcAddress(hKernel, "AddDllDirectory");
+  
+  if (add_dll_directory != NULL) {
+    std::wstring libPathWStr = std::wstring(libPath.begin(), libPath.end());
+    DLL_DIRECTORY_COOKIE cookie = add_dll_directory(libPathWStr.c_str());
+
+    if (cookie == NULL) {
+      lanternLoadError(pError);
+      *pError = "Add Dll Directory - " + *pError;
+      return false;
+    }
+  }
+
+  pLibrary = (void*)::LoadLibraryEx(libFile.c_str(), NULL, LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
 #else
-  pLibrary = ::dlopen(libPath.c_str(), RTLD_NOW|RTLD_GLOBAL);
+  pLibrary = ::dlopen(libFile.c_str(), RTLD_NOW|RTLD_GLOBAL);
 #endif
   if (pLibrary == NULL)
   {
     lanternLoadError(pError);
-    *pError = libPath + " - " + *pError;
+    *pError = libFile + " - " + *pError;
     return false;
   }
   else

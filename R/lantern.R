@@ -7,14 +7,12 @@ lantern_default <- function() {
 
 lantern_start <- function(version = lantern_default()) {
   if (!lantern_installed()) {
-    # stop("Torch is not installed, please run 'torch_install()'.")
+    stop("Torch is not installed, please run 'torch_install()'.")
   }
   
   if (.globals$lantern_started) return()
   
-  lantern_lib <- file.path(lantern_install_path(), "liblantern.dylib")
- 
-  rcpp_lantern_init(lantern_lib)
+  rcpp_lantern_init(lantern_install_path())
   
   .globals$lantern_started <- TRUE
 }
